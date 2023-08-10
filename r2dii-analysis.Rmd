@@ -1,0 +1,176 @@
+---
+title: "Introduction to r2dii.analysis" 
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+
+## Load your r2dii libraries
+
+The first step in your analysis will be to load in the recommended r2dii 
+packages into your current R session.
+[r2dii.data](https://rmi-pacta.github.io/r2dii.data) includes fake data 
+to help demonstrate the tool and 
+[r2dii.match](https://rmi-pacta.github.io/r2dii.match) provides 
+functions to help you easily match your loanbook to asset-level data.
+
+``` {r use-r2dii}
+library(r2dii.data)
+library(r2dii.match)
+library(r2dii.analysis)
+```
+
+To plot your results, you may also load the package 
+[r2dii.plot](https://rmi-pacta.github.io/r2dii.plot).
+
+``` {r use-r2dii.plot}
+library(r2dii.plot)
+```
+
+We also recommend packages in the [tidyverse](https://www.tidyverse.org/); they 
+are optional but useful.
+
+``` {r use-tidyverse}
+library(tidyverse)
+```
+
+## Match your loanbook to climate-related asset-level data
+
+See [r2dii.match](https://rmi-pacta.github.io/r2dii.match) for a more 
+complete description of this process. 
+
+```{r matched}
+# Use these datasets to practice but eventually you should use your own data.
+# The optional syntax `package::data` is to clarify where the data comes from.
+loanbook <- r2dii.data::loanbook_demo
+abcd <- r2dii.data::abcd_demo
+
+matched <- match_name(loanbook, abcd) %>% prioritize()
+
+matched
+```
+
+## Calculate targets
+
+You can calculate scenario targets using two different approaches: Market Share 
+Approach, or Sectoral Decarbonization Approach.
+
+### Market Share Approach
+
+The [Market Share Approach](https://rmi-pacta.github.io/r2dii.analysis/articles/target-market-share.html) is used to calculate scenario targets for the 
+`production` of a technology in a sector. For example, we can use this approach 
+to set targets for the production of electric vehicles in the automotive sector. 
+This approach is recommended for sectors where a granular technology scenario 
+roadmap exists.
+
+Targets can be set at the portfolio level:
+
+```{r market-share-targets-portfolio}
+# Use these datasets to practice but eventually you should use your own data.
+scenario <- r2dii.data::scenario_demo_2020
+regions <- r2dii.data::region_isos_demo
+
+market_share_targets_portfolio <- matched %>%
+  target_market_share(
+    abcd = abcd,
+    scenario = scenario,
+    region_isos = regions
+  )
+
+market_share_targets_portfolio
+```
+
+Or at the company level: 
+
+```{r market-share-targets-company}
+market_share_targets_company <- matched %>%
+  target_market_share(
+    abcd = abcd,
+    scenario = scenario,
+    region_isos = regions,
+    # Output results at company-level.
+    by_company = TRUE 
+  )
+
+market_share_targets_company
+```
+
+### Sectoral Decarbonization Approach
+
+The [Sectoral Decarbonization Approach](https://rmi-pacta.github.io/r2dii.analysis/articles/target-sda.html) 
+is used to calculate scenario targets for the `emission_factor` of a sector. For
+example, you can use this approach to set targets for the average emission 
+factor of the cement sector. This approach is recommended for sectors lacking 
+technology roadmaps.
+
+```{r sda-targets}
+# Use this dataset to practice but eventually you should use your own data.
+co2 <- r2dii.data::co2_intensity_scenario_demo
+
+sda_targets <- matched %>%
+  target_sda(abcd = abcd, co2_intensity_scenario = co2, region_isos = regions) %>% 
+  filter(sector == "cement", year >= 2020)
+
+sda_targets
+```
+
+## Visualization
+
+There are a large variety of possible visualizations stemming from the outputs 
+of `target_market_share()` and `target_sda()`. Below, we highlight a couple of 
+common plots that can easily be created using the `r2dii.plot` package.
+
+### Market Share: Sector-level technology mix
+
+From the market share output, you can plot the portfolio's exposure to various 
+climate sensitive technologies (`projected`), and compare with the corporate 
+economy, or against various scenario targets.
+
+```{r technoloy-mix-portfolio}
+# Pick the targets you want to plot.
+data <- filter(
+  market_share_targets_portfolio,
+  scenario_source == "demo_2020",
+  sector == "power",
+  region == "global",
+  metric %in% c("projected", "corporate_economy", "target_sds")
+)
+
+# Plot the technology mix
+qplot_techmix(data)
+```
+
+### Market Share: Technology-level volume trajectory
+
+You can also plot the technology-specific volume trend. All starting values are
+normalized to 1, to emphasize that we are comparing the rates of buildout and/or
+retirement. 
+
+```{r trajetory-portfolio}
+data <- filter(
+  market_share_targets_portfolio,
+  sector == "power",
+  technology == "renewablescap",
+  region == "global",
+  scenario_source == "demo_2020"
+)
+
+qplot_trajectory(data)
+```
+
+### SDA Target
+
+From the SDA output, we can compare the projected average emission intensity 
+attributed to the portfolio, with the actual emission intensity scenario, and 
+the scenario compliant SDA pathway that the portfolio must follow to achieve 
+the scenario ambition by 2050.
+
+```{r sda plot}
+data <- filter(sda_targets, sector == "cement", region == "global")
+qplot_emission_intensity(data)
+```
