@@ -5,6 +5,7 @@ output:
     source_code: embed
     storyboard: true
     theme: flatly
+    runtime: shiny
 params:
   loanbook: "~/Downloads/data/from-bank/loanbook.csv"
   abcd: "~/Downloads/data/from-2dii/abcd.csv"
@@ -179,24 +180,29 @@ datatable(metric)
 
 This is similar to the output of [tiltIndicator](https://2degreesinvesting.github.io/tiltIndicator/).
 
-### **Visualization:** This is one of several visualizations possible.
+### **Visualization:** This is one of several visualizations possible. It's similar to what [tiltPlot](https://2degreesinvesting.github.io/tiltPlot/) will do.
 
 ```{r echo=show_code}
-# Pick the targets you want to plot
-picked <- filter(
-  metric,
-  scenario_source == "demo_2020",
-  sector == params$sector,
-  region == "global",
-  metric %in% c("projected", "corporate_economy", "target_sds")
+shinyApp(
+  ui = fluidPage(
+    sidebarPanel(inputPanel(
+      selectInput("sector", "Sector:", choices = unique(metric$sector)))
+    ),
+    mainPanel(plotOutput("plot"))
+  ),
+  server = function(input, output) {
+    output$plot <- renderPlot({
+      qplot_techmix(
+        filter(
+          metric,
+          scenario_source == "demo_2020",
+          sector == input$sector,
+          region == "global",
+          metric %in% c("projected", "corporate_economy", "target_sds")
+        )
+      )
+    })
+  }
 )
 ```
 
-```{r}
-# Plot the technology mix
-qplot_techmix(picked)
-```
-
-*** 
-
-This is similar to the output of [tiltPlot](https://2degreesinvesting.github.io/tiltPlot/).
