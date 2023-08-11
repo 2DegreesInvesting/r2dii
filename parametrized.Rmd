@@ -1,12 +1,12 @@
 ---
 title: "Computational document with parameters"
 params:
-  loanbook: "data/from-bank/loanbook.csv"
-  abcd: "data/from-2dii/abcd.csv"
-  scenario: "data/from-2dii/scenario.csv"
-  regions: "data/from-2dii/regions.csv"
-  to_validate: "data/validation/to_validate.csv"
-  validated: "data/validation/validated.csv"
+  loanbook: "~/Downloads/data/from-bank/loanbook.csv"
+  abcd: "~/Downloads/data/from-2dii/abcd.csv"
+  scenario: "~/Downloads/data/from-2dii/scenario.csv"
+  regions: "~/Downloads/data/from-2dii/regions.csv"
+  to_validate: "~/Downloads/data/validation/to_validate.csv"
+  validated: "~/Downloads/data/validation/validated.csv"
   sector: "oil and gas"
   show_code: FALSE
 ---
