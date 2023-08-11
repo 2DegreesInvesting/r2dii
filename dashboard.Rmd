@@ -1,8 +1,10 @@
 ---
-title: "Dashboard with parameters"
+title: "Demo"
 output: 
   flexdashboard::flex_dashboard:
     source_code: embed
+    storyboard: true
+    theme: flatly
 params:
   loanbook: "~/Downloads/data/from-bank/loanbook.csv"
   abcd: "~/Downloads/data/from-2dii/abcd.csv"
@@ -20,24 +22,20 @@ options(readr.show_col_types = FALSE)
 show_code <- FALSE
 ```
 
-Column {data-width=300}
------------------------------------------------------------------------
-
-### tilt and r2dii are alike
+# Why r2dii?
 
 Because tilt's software is still in development, we can't show its workflow from
 end to end. But tilt's software is very similar to [r2dii's
 software](https://pacta.rmi.org/pacta-for-banks-2020/), so we'll show it
 instead.
 
-Both tilt and r2dii workflows share common steps:
+The workflows for tilt and r2dii differ only in details -- in the specific type
+of data and methodology. But at the core, they share the main steps:
 
-1. Input bank data.
-2 Input 2DII data.
-3. Match bank and 2DII data.
-4. Validate matched companies.
-5. Calculate a metric using 2DII's methodology.
-6. Visualize the metric.
+1. Match bank's data with 2DII's data.
+2. Validate those matches manually.
+3. Analyze the data based on 2DII's methodology.
+4. Visualize the results.
 
 ```{r echo=show_code}
 # r2dii software
@@ -55,10 +53,9 @@ library(tidyverse, warn.conflicts = FALSE)
 library(DT)
 ```
 
-Column {data-width=700 .tabset}
------------------------------------------------------------------------
+# Workflow {.storyboard}
 
-### 1. Bank data
+### **Loanbook dataset:** This is one of the two inputs to the matching process.
 
 ```{r echo=show_code}
 loanbook <- read_csv(params$loanbook)
@@ -68,9 +65,11 @@ loanbook <- read_csv(params$loanbook)
 datatable(loanbook)
 ```
 
-> Private data from the bank.
+*** 
 
-### 2. 2DII data
+The bank structures this dataset following 2DII guidelines. This is similar to the dataset that banks need to work with tilt.
+
+### **Companies dataset:** This is the second input to the matching process, and aso an input to the analysis process that comes later.
 
 ```{r echo=show_code}
 abcd <- read_csv(params$abcd)
@@ -80,9 +79,14 @@ abcd <- read_csv(params$abcd)
 datatable(abcd)
 ```
 
-> Data from 2DII.
+*** 
 
-### 3. Matched data
+This is similar to the companies dataset that tilt produces and shares with banks.
+
+Banks get this dataset from 2DII or a comercial provider of 2DII-compatible
+data.
+
+### **Matched dataset:** This is the output of the matching process, and the input to the manual validation process that follows.
 
 ```{r echo=show_code}
 matched <- match_name(loanbook, abcd)
@@ -92,9 +96,14 @@ matched <- match_name(loanbook, abcd)
 datatable(matched)
 ```
 
-> Bank data matched to 2DII data.
+***
 
-### 3. Validated data
+This is similar to the output of
+[tilt.company.match](https://2degreesinvesting.github.io/tilt.company.match/)
+which some banks already experienced in an early road testing. The bank saves
+this dataset to validate it manually with a spreadsheet editor like MS Excel.
+
+### **Validated dataset:** This is the result of the manual validation. It is one input to the analysis process that follows.
 
 ```{r echo=show_code}
 # The bank saves the matched data to validate it manually.
@@ -115,13 +124,43 @@ validated_and_prioritized <- prioritize(validated)
 datatable(validated_and_prioritized)
 ```
 
-> Data manually validated and prioritized by the bank.
+*** 
 
-### 4. Calculated metric
+The previous step and this one are interrupted. For large loanbooks banks
+typically take several days to produce this dataset. Once done this step reads
+it in and the workflow continues.
+
+### **Scenarios dataset:** This is also an input to the analysis process.
 
 ```{r echo=show_code}
 # Datasets that the bank gets from a data provider
 scenario <- read_csv(params$scenario)
+```
+
+```{r}
+datatable(scenario)
+```
+
+Banks get this dataset from 2DII or a comercial provider of 2DII-compatible
+data.
+
+### **Regions dataset:** This is yet another input to the analysis process.
+
+```{r echo=show_code}
+# Datasets that the bank gets from a data provider
+regions <- read_csv(params$regions)
+```
+
+```{r}
+datatable(regions)
+```
+
+Banks get this dataset from 2DII or a comercial provider of 2DII-compatible
+data.
+
+### **Analyzed dataset:** This is the output of the analysis process. It involves running sofware that implements 2DII's methodology.
+
+```{r echo=show_code}
 regions <- read_csv(params$regions)
 
 metric <- validated_and_prioritized |>
@@ -132,9 +171,11 @@ metric <- validated_and_prioritized |>
 datatable(metric)
 ```
 
-> Metric calculated using 2DII's methodology.
+*** 
 
-### 5. Visualization
+This is similar to the output of [tiltIndicator](https://2degreesinvesting.github.io/tiltIndicator/).
+
+### 5. **Visualization:** This is one of several visualizations possible.
 
 ```{r echo=show_code}
 # Pick the targets you want to plot
@@ -152,4 +193,6 @@ picked <- filter(
 qplot_techmix(picked)
 ```
 
-> Plot showing the technology mix.
+*** 
+
+This is similar to the output of [tiltPlot](https://2degreesinvesting.github.io/tiltPlot/).
