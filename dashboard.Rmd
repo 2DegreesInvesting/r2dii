@@ -13,7 +13,6 @@ params:
   regions: "~/Downloads/data/from-2dii/regions.csv"
   to_validate: "~/Downloads/data/validation/to_validate.csv"
   validated: "~/Downloads/data/validation/validated.csv"
-  sector: "oil and gas"
 ---
 
 ```{r setup, include=FALSE}
