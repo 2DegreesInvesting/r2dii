@@ -141,6 +141,8 @@ scenario <- read_csv(params$scenario)
 datatable(scenario)
 ```
 
+***
+
 Banks get this dataset from 2DII or a comercial provider of 2DII-compatible
 data.
 
@@ -154,6 +156,8 @@ regions <- read_csv(params$regions)
 ```{r}
 datatable(regions)
 ```
+
+***
 
 Banks get this dataset from 2DII or a comercial provider of 2DII-compatible
 data.
@@ -175,7 +179,7 @@ datatable(metric)
 
 This is similar to the output of [tiltIndicator](https://2degreesinvesting.github.io/tiltIndicator/).
 
-### 5. **Visualization:** This is one of several visualizations possible.
+### **Visualization:** This is one of several visualizations possible.
 
 ```{r echo=show_code}
 # Pick the targets you want to plot
