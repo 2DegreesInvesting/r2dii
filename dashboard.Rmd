@@ -1,0 +1,155 @@
+---
+title: "Dashboard with parameters"
+output: 
+  flexdashboard::flex_dashboard:
+    source_code: embed
+params:
+  loanbook: "~/Downloads/data/from-bank/loanbook.csv"
+  abcd: "~/Downloads/data/from-2dii/abcd.csv"
+  scenario: "~/Downloads/data/from-2dii/scenario.csv"
+  regions: "~/Downloads/data/from-2dii/regions.csv"
+  to_validate: "~/Downloads/data/validation/to_validate.csv"
+  validated: "~/Downloads/data/validation/validated.csv"
+  sector: "oil and gas"
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+
+options(readr.show_col_types = FALSE)
+show_code <- FALSE
+```
+
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+### tilt and r2dii are alike
+
+Because tilt's software is still in development, we can't show its workflow from
+end to end. But tilt's software is very similar to [r2dii's
+software](https://pacta.rmi.org/pacta-for-banks-2020/), so we'll show it
+instead.
+
+Both tilt and r2dii workflows share common steps:
+
+1. Input bank data.
+2 Input 2DII data.
+3. Match bank and 2DII data.
+4. Validate matched companies.
+5. Calculate a metric using 2DII's methodology.
+6. Visualize the metric.
+
+```{r echo=show_code}
+# r2dii software
+# * Toy data from banks and from tilt data-management. Eventually tiltToyData.
+library(r2dii.data)
+# * Like tilt.company.match, eventually tiltMatch
+library(r2dii.match)
+# * Like tiltIndicator
+library(r2dii.analysis)
+# * Like tiltPlot
+library(r2dii.plot)
+
+# General software
+library(tidyverse, warn.conflicts = FALSE)
+library(DT)
+```
+
+Column {data-width=700 .tabset}
+-----------------------------------------------------------------------
+
+### 1. Bank data
+
+```{r echo=show_code}
+loanbook <- read_csv(params$loanbook)
+```
+
+```{r}
+datatable(loanbook)
+```
+
+> Private data from the bank.
+
+### 2. 2DII data
+
+```{r echo=show_code}
+abcd <- read_csv(params$abcd)
+```
+
+```{r}
+datatable(abcd)
+```
+
+> Data from 2DII.
+
+### 3. Matched data
+
+```{r echo=show_code}
+matched <- match_name(loanbook, abcd)
+```
+
+```{r}
+datatable(matched)
+```
+
+> Bank data matched to 2DII data.
+
+### 3. Validated data
+
+```{r echo=show_code}
+# The bank saves the matched data to validate it manually.
+write_csv(matched, params$to_validate)
+```
+
+```{r echo=show_code}
+validated <- read_csv(params$validated)
+```
+
+```{r echo=show_code}
+# Where the number of perfect matches is greater than one, pick the one with
+# highest priority
+validated_and_prioritized <- prioritize(validated)
+```
+
+```{r}
+datatable(validated_and_prioritized)
+```
+
+> Data manually validated and prioritized by the bank.
+
+### 4. Calculated metric
+
+```{r echo=show_code}
+# Datasets that the bank gets from a data provider
+scenario <- read_csv(params$scenario)
+regions <- read_csv(params$regions)
+
+metric <- validated_and_prioritized |>
+  target_market_share(abcd = abcd, scenario = scenario, region_isos = regions)
+```
+
+```{r}
+datatable(metric)
+```
+
+> Metric calculated using 2DII's methodology.
+
+### 5. Visualization
+
+```{r echo=show_code}
+# Pick the targets you want to plot
+picked <- filter(
+  metric,
+  scenario_source == "demo_2020",
+  sector == params$sector,
+  region == "global",
+  metric %in% c("projected", "corporate_economy", "target_sds")
+)
+```
+
+```{r}
+# Plot the technology mix
+qplot_techmix(picked)
+```
+
+> Plot showing the technology mix.

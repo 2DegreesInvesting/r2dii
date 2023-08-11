@@ -25,9 +25,8 @@ options(readr.show_col_types = FALSE)
 show_code <- params$show_code
 ```
 
-Because tilt's software is in early stages of development, we still lack a
-minimum viable product to demonstrate the entire workflow from end to end.
-However, tilt's software is very similar to [r2dii's
+Because tilt's software is in development, we still can't show its workflow from
+end to end. But tilt's software is very similar to [r2dii's
 software](https://pacta.rmi.org/pacta-for-banks-2020/), which is mature, and was
 originally developed by 2DII. Therefore this article shows the r2dii workflow
 instead.
@@ -56,7 +55,7 @@ library(r2dii.plot)
 library(tidyverse, warn.conflicts = FALSE)
 ```
 
-### Match bank data with 2DII data
+### Match
 
 ```{r echo=show_code}
 # Private data from the bank
