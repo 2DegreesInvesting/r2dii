@@ -66,12 +66,8 @@ run_app <- function() {
       matched()
     })
     output$to_validate <- downloadHandler(
-      filename = function() {
-        "to_validate.csv"
-      },
-      content = function(file) {
-        write_csv(matched(), file)
-      }
+      filename = function() {"to_validate.csv"},
+      content = function(file) {write_csv(matched(), file)}
     )
 
     validated <- reactive({
@@ -103,22 +99,18 @@ run_app <- function() {
       market_share()
     })
     output$result <- downloadHandler(
-      filename = function() {
-        "result.csv"
-      },
-      content = function(file) {
-        write_csv(market_share(), file)
-      }
+      filename = function() {"result.csv"},
+      content = function(file) {write_csv(market_share(), file)}
     )
 
     output$sector <- renderPlot({
       qplot_techmix(
         filter(
           market_share(),
-          scenario_source == "demo_2020",
-          sector == input$sector,
-          region == "global",
-          metric %in% c("projected", "corporate_economy", "target_sds")
+          .data$scenario_source == "demo_2020",
+          .data$sector == input$sector,
+          .data$region == "global",
+          .data$metric %in% c("projected", "corporate_economy", "target_sds")
         )
       )
     })
