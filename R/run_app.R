@@ -8,7 +8,8 @@
 run_app <- function() {
   local_options(list(readr.show_col_types = FALSE))
 
-  ui <- navbarPage(theme = shinytheme("flatly"),
+  ui <- navbarPage(
+    theme = shinytheme("flatly"),
     "r2dii",
     tabPanel(
       "Match",
