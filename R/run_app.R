@@ -8,8 +8,10 @@
 run_app <- function() {
   local_options(list(readr.show_col_types = FALSE))
 
-  ui <- navbarPage("r2dii",
-    tabPanel("Match",
+  ui <- navbarPage(
+    "r2dii",
+    tabPanel(
+      "Match",
       h2("Inputs"),
       fileInput("loanbook", "Bank's data", accept = ".csv"),
       DTOutput("loanbook"),
@@ -20,7 +22,8 @@ run_app <- function() {
       DTOutput("matched"),
       downloadButton("to_validate", "Save in '~/Downloads/to_validate.csv'")
     ),
-    tabPanel("Apply methodology",
+    tabPanel(
+      "Apply methodology",
       h2("Inputs"),
       fileInput("validated", "Validated data", accept = ".csv"),
       DTOutput("validated"),
@@ -33,7 +36,8 @@ run_app <- function() {
       DTOutput("market_share"),
       downloadButton("result", "Save in '~/Downloads/result.csv'")
     ),
-    tabPanel("Visualize",
+    tabPanel(
+      "Visualize",
       selectInput(
         "sector",
         "Sector",
@@ -66,8 +70,12 @@ run_app <- function() {
       matched()
     })
     output$to_validate <- downloadHandler(
-      filename = function() {"to_validate.csv"},
-      content = function(file) {write_csv(matched(), file)}
+      filename = function() {
+        "to_validate.csv"
+      },
+      content = function(file) {
+        write_csv(matched(), file)
+      }
     )
 
     validated <- reactive({
@@ -99,8 +107,12 @@ run_app <- function() {
       market_share()
     })
     output$result <- downloadHandler(
-      filename = function() {"result.csv"},
-      content = function(file) {write_csv(market_share(), file)}
+      filename = function() {
+        "result.csv"
+      },
+      content = function(file) {
+        write_csv(market_share(), file)
+      }
     )
 
     output$sector <- renderPlot({
