@@ -1,0 +1,4 @@
+Name: r2dii app
+Description: An app to run the entire r2dii workflow.
+Binding: run_app
+Interactive: true

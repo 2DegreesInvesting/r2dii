@@ -10,7 +10,10 @@ run_app <- function() {
 
   ui <- navbarPage(
     theme = shinytheme("flatly"),
-    "r2dii",
+    a(
+      "r2dii",
+      href = "https://rmi-pacta.github.io/r2dii.analysis/articles/r2dii-analysis.html"
+    ),
     tabPanel(
       "Match",
       h2("Inputs"),
