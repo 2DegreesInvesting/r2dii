@@ -33,10 +33,9 @@ run_app <- function() {
       h2("Output"),
       strong("Table"),
       DTOutput("market_share"),
-      downloadButton("result", "Save in '~/Downloads/result.csv'"),
-      br(),
-      br(),
-      p(strong("Plot")),
+      downloadButton("result", "Save in '~/Downloads/result.csv'")
+    ),
+    tabPanel("Visualize",
       selectInput(
         "sector",
         "Sector",
