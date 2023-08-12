@@ -13,6 +13,7 @@
 #' @importFrom readr read_csv
 #' @importFrom readr write_csv
 #' @importFrom rlang .data
+#' @importFrom shinythemes shinytheme
 #' @importFrom withr local_options
 ## usethis namespace: end
 NULL
