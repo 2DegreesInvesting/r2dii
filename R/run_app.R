@@ -1,14 +1,12 @@
+#' Run the app
+#'
+#' @return Called for its side effect.
 #' @export
+#'
+#' @examples
+#' if (interactive()) run_app()
 run_app <- function() {
-  library(shiny)
-  library(readr, warn.conflicts = FALSE)
-  library(dplyr, warn.conflicts = FALSE)
-  library(DT)
-  library(r2dii.match)
-  library(r2dii.analysis)
-  library(r2dii.plot)
-
-  options(readr.show_col_types = FALSE)
+  local_options(list(readr.show_col_types = FALSE))
 
   ui <- navbarPage("r2dii",
     tabPanel("Match",
