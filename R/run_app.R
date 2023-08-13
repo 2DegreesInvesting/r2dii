@@ -24,10 +24,10 @@ run_app <- function() {
       h2("Output"),
       strong("Matched"),
       DTOutput("matched"),
-      downloadButton("to_validate", "Save in '~/Downloads/to_validate.csv'")
+      downloadButton("to_validate", "Save in '~/Downloads/matched.csv'")
     ),
     tabPanel(
-      "Apply methodology",
+      "Analyze",
       h2("Inputs"),
       fileInput("validated", "Validated data", accept = ".csv"),
       DTOutput("validated"),
@@ -36,9 +36,9 @@ run_app <- function() {
       fileInput("regions", "Additional data (regions)", accept = ".csv"),
       DTOutput("regions"),
       h2("Output"),
-      strong("Table"),
+      strong("Analyzed"),
       DTOutput("market_share"),
-      downloadButton("result", "Save in '~/Downloads/result.csv'")
+      downloadButton("analyzed", "Save in '~/Downloads/analyzed.csv'")
     ),
     tabPanel(
       "Visualize",
@@ -75,7 +75,7 @@ run_app <- function() {
     })
     output$to_validate <- downloadHandler(
       filename = function() {
-        "to_validate.csv"
+        "matched.csv"
       },
       content = function(file) {
         write_csv(matched(), file)
@@ -110,9 +110,9 @@ run_app <- function() {
     output$market_share <- renderDT({
       market_share()
     })
-    output$result <- downloadHandler(
+    output$analyzed <- downloadHandler(
       filename = function() {
-        "result.csv"
+        "analyzed.csv"
       },
       content = function(file) {
         write_csv(market_share(), file)
