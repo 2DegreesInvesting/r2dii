@@ -17,9 +17,9 @@ run_app <- function() {
     tabPanel(
       "Match",
       h2("Inputs"),
-      fileInput("loanbook", "Bank's data", accept = ".csv"),
+      fileInput("loanbook", "Bank data", accept = ".csv"),
       DTOutput("loanbook"),
-      fileInput("companies", "Delivered data", accept = ".csv"),
+      fileInput("companies", "2DII data", accept = ".csv"),
       DTOutput("companies"),
       h2("Output"),
       strong("Matched"),
@@ -31,9 +31,9 @@ run_app <- function() {
       h2("Inputs"),
       fileInput("validated", "Validated data", accept = ".csv"),
       DTOutput("validated"),
-      fileInput("scenarios", "Additional data (scenario)", accept = ".csv"),
+      fileInput("scenarios", "Additional 2DII data (scenario)", accept = ".csv"),
       DTOutput("scenarios"),
-      fileInput("regions", "Additional data (regions)", accept = ".csv"),
+      fileInput("regions", "Additional 2DII data (regions)", accept = ".csv"),
       DTOutput("regions"),
       h2("Output"),
       strong("Analyzed"),
@@ -44,7 +44,7 @@ run_app <- function() {
       "Visualize",
       selectInput(
         "sector",
-        "Sector",
+        "Plot",
         choices = c("automotive", "oil and gas", "power")
       ),
       plotOutput("sector")
